@@ -231,10 +231,97 @@ FROM wands a1 JOIN wands_property b1 ON a1.code = b1.codE
 WHERE b.age = b1.age AND a.power = a1.power) 
 ORDER BY a.power DESC, b.age DESC;
 -------------------------------------------------------------------------------------------------
+### Julia asked her students to create some coding challenges. Write a query to print the hacker_id, name, and the total number of challenges created 
+by each student. Sort your results by the total number of challenges in descending order. If more than one student created the same number of challenges, 
+then sort the result by hacker_id. If more than one student created the same number of challenges and the count is less than the maximum number of 
+challenges created, then exclude those students from the result.
+Input Format
+The following tables contain challenge data:
+Hackers: The hacker_id is the id of the hacker, and name is the name of the hacker. 
+Challenges: The challenge_id is the id of the challenge, and hacker_id is the id of the student who created the challenge.
+
+--->>SELECT H.HACKER_ID, H.NAME, COUNT(C.CHALLENGE_ID)AS TOTAL FROM HACKERS H,CHALLENGES C WHERE H.HACKER_ID = C.HACKER_ID GROUP BY H.HACKER_ID,H.NAME
+HAVING COUNT(C.CHALLENGE_ID) IN (SELECT MAX(TOTAL) FROM (SELECT COUNT(*) AS TOTAL FROM CHALLENGES GROUP BY HACKER_ID)) OR COUNT(C.CHALLENGE_ID) IN 
+(SELECT TOTAL FROM(SELECT COUNT(*) AS TOTAL FROM CHALLENGES GROUP BY HACKER_ID)GROUP BY TOTAL
+HAVING COUNT(TOTAL)=1) ORDER BY COUNT(C.CHALLENGE_ID) DESC, H.HACKER_ID;
+----------------------------------------------------------------------------------------------------
+### You did such a great job helping Julia with her last coding contest challenge that she wants you to work on this one, too!
+
+The total score of a hacker is the sum of their maximum scores for all of the challenges. Write a query to print the hacker_id, name, and total 
+score of the hackers ordered by the descending score. If more than one hacker achieved the same total score, then sort the result by ascending 
+hacker_id. Exclude all hackers with a total score of  from your result.
+Input Format
+The following tables contain contest data:
+Hackers: The hacker_id is the id of the hacker, and name is the name of the hacker. 
+
+Submissions: The submission_id is the id of the submission, hacker_id is the id of the hacker who made the submission, challenge_id is the id 
+of the challenge for which the submission belongs to, and score is the
+
+--->>SELECT X.HACKER_id,(SELECT H.NAME FROM HACKERS H WHERE H.HACKER_ID = X.HACKER_ID)
+NAME, 
+SUM(X.SCORE) TOTAL_SCORE FROM(SELECT HACKER_ID, MAX(SCORE) SCORE FROM SUBMISSIONS S GROUP BY 1,S.CHALLENGE_ID)X
+GROUP BY 1 HAVING TOTAL_SCORE > 0
+ORDER BY TOTAL_SCORE DESC,HACKER_ID;
+-------------------------------------------------------------------------------------------------
+### Draw Triangle 2
+P(R) represents a pattern drawn by Julia in R rows. The following pattern represents P(5):
+
+* 
+* * 
+* * * 
+* * * * 
+* * * * *
+Write a query to print the pattern P(20).
+
+--->>SELECT SYS_CONNECT_BY_PATH(NULL,'* ')FROM DUAL CONNECT BY ROWNUM<=20 ORDER BY 1 ASC;
+--->>SET @TEMP:=0;
+SELECT REPEAT('* ',@TEMP:=@TEMP+1)
+FROM INFORMATION_SCHEMA.TABLES;
+--->>set @row:= 0;
+select repeat('* ',@row:= @row+1) from information_schema.tables 
+where @row < 20
+-----------------------------------------------------------------------------------------------------
+### Draw Triangle 2
+P(R) represents a pattern drawn by Julia in R rows. The following pattern represents P(5):
+
+* * * * * 
+* * * * 
+* * * 
+* * 
+*
+Write a query to print the pattern P(20).
+
+--->>SELECT SYS_CONNECT_BY_PATH(NULL,'* ')FROM DUAL CONNECT BY ROWNUM<=20 ORDER BY 1 ASC;
+--->>SET @TEMP:=20;
+SELECT REPEAT('* ',@TEMP:=@TEMP-1)
+FROM INFORMATION_SCHEMA.TABLES;
+-----------------------------------------------------------------------------------------------------
 ### 
+Write a query to print all prime numbers less than or equal 1000  to . Print your result on a single line, and use the ampersand () character as your 
+separator (instead of a space).
+For example, the output for all prime numbers <10  would be:
+2&3&5&7
 
+--->>WITH x AS (
+    SELECT level+1 x
+    FROM dual
+    CONNECT BY LEVEL <= 999)
+SELECT x.x
+FROM x
+WHERE NOT EXISTS (
+    SELECT 1 FROM x y
+    WHERE x.x > y.x AND REMAINDER(x.x,y.x) = 0
+);
+--->>
+--------------------------------------------------------------------------------------------------------
+### revising the aggregation- the sum function
+Query the total population of all cities in CITY where District is California.
+Input Format
+The CITY table is described as follows:
 
-
+--->>SELECT SUM(POPULATION) FROM CITY WHERE DISTRICT='California';
+-------------------------------------------------------------------------------------------------
+### 
 
 
 
