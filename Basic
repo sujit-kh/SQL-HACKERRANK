@@ -179,8 +179,59 @@ Note: Print NULL when there are no more names corresponding to an occupation.
 
 --->>
 
+-----------------------------------------------------------------------------------------
+### The Report
+You are given two tables: Students and Grades. Students contains three columns ID, Name and Marks.
 
+Grades contains the following data:
 
+Ketty gives Eve a task to generate a report containing three columns: Name, Grade and Mark. Ketty doesn't want the NAMES of those students 
+who received a grade lower than 8. The report must be in descending order by grade -- i.e. higher grades are entered first. If there is more 
+than one student with the same grade (8-10) assigned to them, order those particular students by their name alphabetically. Finally, if the grade 
+is lower than 8, use "NULL" as their name and list them by their grades in descending order. If there is more than one student with the same grade 
+(1-7) assigned to them, order those particular students by their marks in ascending order.
+
+--->>SELECT case when grd.grade < 8 then NULL
+            WHEN grd.grade >= 8 then std.name END,
+            grd.grade, std.marks FROM students std,grades grd where std.marks BETWEEN 
+            grd.min_mark AND grd.max_mark ORDER BY grd.grade DESC, std.name ASC;
+            
+--->>SELECT s.name, g.grade, s.marks from students s, grades g where g.grade>=8 and s.marks between g.min_mark and g.max_mark order by g.grade desc, s.name;
+SELECT 'NULL', g.grade, s.marks from students s, grades g where g.grade<8 and s.marks between g.min_mark and g.max_mark order by g.grade desc, s.marks;
+-----------------------------------------------------------------------------------------------
+### Top Competitors
+Julia just finished conducting a coding contest, and she needs your help assembling the leaderboard! Write a query to print the respective hacker_id and 
+name of hackers who achieved full scores for more than one challenge. Order your output in descending order by the total number of challenges in which the 
+hacker earned a full score. If more than one hacker received full scores in same number of challenges, then sort them by ascending hacker_id.
+
+--->>select S.hacker_id, name FROM SUBMISSIONS AS S 
+JOIN HACKERS AS H ON S.hacker_id = H.hacker_id
+JOIN Challenges AS C ON S.challenge_id = C.challenge_id
+JOIN Difficulty AS D ON C.difficulty_level = D.difficulty_level
+WHERE S.score = D.score GROUP BY name, S.hacker_id HAVING count(S.challenge_id)>1
+ORDER BY count (S.challenge_id) DESC,S.hacker_id;
+-------------------------------------------------------------------------------------------------
+### Ollivander's inventory
+Harry Potter and his friends are at Ollivander's with Ron, finally replacing Charlie's old broken wand.
+Hermione decides the best way to choose is by determining the minimum number of gold galleons needed to buy each non-evil wand of high power and age.
+Write a query to print the id, age, coins_needed, and power of the wands that Ron's interested in, sorted in order of descending power. If more than 
+one wand has same power, sort the result in order of descending age.
+Input Format
+The following tables contain data on the wands in Ollivander's inventory:
+Wands: The id is the id of the wand, code is the code of the wand, coins_needed is the total number of gold galleons needed to buy the wand, and power
+denotes the quality of the wand (the higher the power, the better the wand is). 
+Wands_Property: The code is the code of the wand, age is the age of the wand, and is_evil denotes whether the wand is good for the dark arts.
+If the value of is_evil is 0, it means that the wand is not evil. The mapping between code and age is one-one, meaning that if there are two pairs, 
+and , then  and
+
+--->>select a.id,b.age,a.coins_needed,a.power
+FROM wands a JOIN wands_property b ON a.code = b.code
+WHERE b.is_evil = 0 AND a.coins_needed = (SELECT Min(a1.coins_needed)
+FROM wands a1 JOIN wands_property b1 ON a1.code = b1.codE
+WHERE b.age = b1.age AND a.power = a1.power) 
+ORDER BY a.power DESC, b.age DESC;
+-------------------------------------------------------------------------------------------------
+### 
 
 
 
